@@ -1,0 +1,20 @@
+# ============================================================
+# VARIABLES DE ENTORNO — ECOSISTEMA TINACOS
+# Alianza Comunitaria · 2026
+# Archivo: .env.local
+# ============================================================
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://mcwlpopucpxfjdawxlgk.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_KEY=      # ← service_role key (Settings → API → service_role)
+
+# Chatlevel
+CHATLEVEL_API_KEY=         # ← tu API key de Chatlevel
+CHATLEVEL_WEBHOOK_SECRET=  # ← para validar webhooks entrantes
+
+# App
+NEXT_PUBLIC_APP_URL=https://tu-dominio.vercel.app
+
+# Google Maps (para el Rutero)
+GOOGLE_MAPS_API_KEY=       # ← opcional, si quieres geocoding automático
