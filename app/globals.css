@@ -1,4 +1,5 @@
-/* app/globals.css */
+@import "tailwindcss";
+
 * {
   box-sizing: border-box;
   padding: 0;
@@ -6,6 +7,6 @@
 }
 
 body {
-  background-color: #f9fafb;
-  color: #111827;
+  background-color: #0a0a0a;
+  color: #ededed;
 }
