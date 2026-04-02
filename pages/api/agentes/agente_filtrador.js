@@ -5,19 +5,14 @@
 // Archivo: /api/agentes/filtrador.js
 // ============================================================
 
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  'https://mcwlpopucpxfjdawxlgk.supabase.co',
-  process.env.SUPABASE_SERVICE_KEY // usar service key en servidor, NO anon
-)
+import { supabaseAdmin as supabase } from '../../../lib/supabase'
 
 // ── CAMPOS REQUERIDOS PARA LEAD COMPLETO ──────────────────
 const CAMPOS_REQUERIDOS = ['nombre', 'telefono', 'municipio', 'cantidad', 'capacidad_lts']
 const CAMPOS_ENTREGA    = ['direccion'] // solo si tipo_entrega = 'domicilio'
 
 // ── CAPACIDADES VÁLIDAS ───────────────────────────────────
-const CAPACIDADES_VALIDAS = [450, 600, 750, 1100, 1500, 2500]
+const CAPACIDADES_VALIDAS = [450, 600, 750, 1200, 1500, 2500]
 
 // ── MUNICIPIOS DEL SUR DE VERACRUZ ───────────────────────
 const MUNICIPIOS_VALIDOS = [

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "error": "#ee7d77",
+              "surface-container": "#05183c",
+              "on-secondary-fixed": "#354053",
+              "surface-container-low": "#06122d",
+              "outline": "#5b74b1",
+              "tertiary": "#9bffce",
+              "surface-tint": "#7bd0ff",
+              "surface-container-highest": "#00225a",
+              "secondary-container": "#313c4f",
+              "surface-dim": "#060e20",
+              "primary-fixed": "#c4e7ff",
+              "on-tertiary-fixed-variant": "#006544",
+              "on-primary-fixed": "#00445e",
+              "on-secondary": "#152032",
+              "tertiary-dim": "#58e7ab",
+              "on-surface-variant": "#91aaeb",
+              "on-tertiary-fixed": "#00452d",
+              "inverse-primary": "#00668b",
+              "tertiary-container": "#69f6b8",
+              "surface-variant": "#00225a",
+              "on-primary": "#004560",
+              "inverse-on-surface": "#4d556b",
+              "error-dim": "#bb5551",
+              "tertiary-fixed": "#69f6b8",
+              "primary": "#7bd0ff",
+              "primary-dim": "#47c4ff",
+              "on-primary-fixed-variant": "#006286",
+              "on-error": "#490106",
+              "inverse-surface": "#faf8ff",
+              "primary-fixed-dim": "#a2dcff",
+              "tertiary-fixed-dim": "#58e7ab",
+              "background": "#060e20",
+              "on-tertiary-container": "#005a3c",
+              "on-secondary-fixed-variant": "#515c70",
+              "secondary-fixed": "#d8e3fb",
+              "on-tertiary": "#006443",
+              "on-error-container": "#ff9993",
+              "surface-bright": "#002867",
+              "on-secondary-container": "#b4c0d7",
+              "surface-container-high": "#031d4b",
+              "on-primary-container": "#97d8ff",
+              "surface": "#060e20",
+              "secondary-dim": "#939eb5",
+              "primary-container": "#004c69",
+              "secondary": "#939eb5",
+              "surface-container-lowest": "#000000",
+              "outline-variant": "#2b4680",
+              "on-surface": "#dee5ff",
+              "secondary-fixed-dim": "#cad5ed",
+              "on-background": "#dee5ff",
+              "error-container": "#7f2927"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body min-h-screen flex flex-col md:flex-row overflow-hidden">
+<!-- NavigationDrawer (Shared Component) -->
+<aside class="hidden md:flex flex-col py-6 gap-2 bg-[#05183c] h-screen w-64 fixed left-0 top-0 z-40 border-r border-[#2b4680]/15 font-['Inter'] text-sm font-medium">
+<div class="px-6 mb-8 flex flex-col gap-1">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center mb-4 border border-outline-variant/20">
+<span class="material-symbols-outlined text-primary" data-icon="local_shipping">local_shipping</span>
+</div>
+<p class="text-on-surface font-bold text-lg">Admin Operator</p>
+<p class="text-on-surface-variant text-xs">Logistics Command</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<div class="flex items-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all text-[#dee5ff]/60 hover:text-[#dee5ff] hover:bg-[#00225a]/50">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all text-[#dee5ff]/60 hover:text-[#dee5ff] hover:bg-[#00225a]/50">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span>Pipeline</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all bg-[#00225a] text-[#9bffce] border-l-4 border-[#7bd0ff]">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span>Logistics</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-md cursor-pointer transition-all text-[#dee5ff]/60 hover:text-[#dee5ff] hover:bg-[#00225a]/50">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span>Documents</span>
+</div>
+</nav>
+<div class="px-6 pt-4 border-t border-outline-variant/10">
+<p class="text-[10px] text-on-surface-variant tracking-widest uppercase opacity-50">v1.0.4</p>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-screen md:ml-64">
+<!-- TopAppBar (Shared Component) -->
+<header class="flex items-center justify-between px-6 h-16 w-full bg-[#060e20] docked full-width top-0 z-50 shadow-[0_32px_32px_rgba(222,229,255,0.04)] font-['Inter'] antialiased tracking-tight">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 rounded-lg hover:bg-[#00225a] transition-colors active:scale-95">
+<span class="material-symbols-outlined text-[#7bd0ff]" data-icon="grid_view">grid_view</span>
+</button>
+<h1 class="text-lg font-bold tracking-widest text-[#dee5ff] uppercase">TINACOS LOGISTICS</h1>
+</div>
+<div class="flex items-center gap-3">
+<div class="hidden sm:flex flex-col items-end mr-2">
+<span class="text-[10px] font-bold text-tertiary uppercase tracking-tighter">System Status</span>
+<span class="text-xs text-on-surface-variant">Online</span>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-primary-container p-0.5">
+<img alt="Profile" class="w-full h-full rounded-full object-cover" data-alt="close up professional headshot of a logistics manager in a dark blue uniform with soft studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUIjY0Le3HtmsdxZIoqslAQK3dq89pqMybRWG5OlmbZFUzh5DAHPppkhDjeeY-g735Vqpnm8ecSVboZNO-2LLSgNq1NeC7cG5cRSF9s-qEkuSfiV79pgW2JR56Hl_-OWMKr_pCleS74IPxPR99NM4uTZOdT2pxj081IPV6Mm-m0PBkPwgpFvKf2ywRrSFgHUDbzDFTNOWmuhsBlk4klEQ8Hoyhtmx0OjvzmTXigdzGv4kftFSkyyWT9u2Aa9kcj7eeuD_h90GGIvY"/>
+</div>
+</div>
+</header>
+<!-- Dynamic Content Canvas -->
+<div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+<!-- Map View (Left Section) -->
+<section class="flex-1 relative h-64 md:h-auto bg-surface-container-lowest overflow-hidden">
+<div class="absolute inset-0 grayscale opacity-40">
+<img class="w-full h-full object-cover" data-alt="Top down satellite view of a modern urban street grid with dark asphalt and bright city lights at night" data-location="Monterrey" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCOMm-Rv3qhWH4bCpwnF_ORtJPIo2aWobFr1h9mMlWcNC7fky_sjmgOWO7tmaa0ipEL_JlicOr31bqbK9oidMM8SruxJmBJZw83sv57L3PZH2kPmeiytGJmalyQc0osvBl6CRzRQYbfbc2vc6TbGTUhJFi6DklyXnC_jdgv--BT-9A0hhGDM8e7iZypMHkD4s1Ije3reXq66vMIZpguan-zNIbSZ64a4MFboGDPhc_qGVKHgr4PO46ODC-2EAtbL99HQK7M28okRtU"/>
+</div>
+<!-- Map UI Overlay -->
+<div class="absolute top-4 left-4 flex flex-col gap-2">
+<div class="bg-surface-container-highest/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-outline-variant/20 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary animate-pulse"></span>
+<span class="text-[10px] font-bold text-on-surface tracking-wider uppercase">Live Route Tracking</span>
+</div>
+</div>
+<!-- Map Pins (Abstracted UI) -->
+<div class="absolute top-1/4 left-1/3 group cursor-pointer">
+<div class="flex flex-col items-center">
+<div class="bg-primary text-on-primary px-2 py-1 rounded shadow-lg text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity">STOP 01</div>
+<span class="material-symbols-outlined text-primary text-3xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<div class="absolute top-2/3 right-1/4 group cursor-pointer">
+<div class="flex flex-col items-center">
+<div class="bg-tertiary text-on-tertiary px-2 py-1 rounded shadow-lg text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity">STOP 02</div>
+<span class="material-symbols-outlined text-tertiary text-3xl" style="font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+</div>
+<div class="absolute bottom-4 right-4 flex flex-col gap-2">
+<button class="w-10 h-10 bg-surface-container-highest rounded-lg flex items-center justify-center text-on-surface shadow-lg hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</button>
+<button class="w-10 h-10 bg-surface-container-highest rounded-lg flex items-center justify-center text-on-surface shadow-lg hover:bg-surface-bright transition-colors">
+<span class="material-symbols-outlined" data-icon="remove">remove</span>
+</button>
+<button class="w-10 h-10 bg-primary text-on-primary rounded-lg flex items-center justify-center shadow-lg hover:bg-primary-dim transition-colors">
+<span class="material-symbols-outlined" data-icon="my_location">my_location</span>
+</button>
+</div>
+</section>
+<!-- Stop List (Right Section / Bottom Sheet on Mobile) -->
+<aside class="w-full md:w-[420px] bg-surface-container border-l border-outline-variant/15 flex flex-col z-10 shadow-2xl">
+<!-- List Header -->
+<div class="p-6 border-b border-outline-variant/10">
+<div class="flex justify-between items-end mb-4">
+<div>
+<h2 class="text-xl font-bold text-on-surface tracking-tight">Active Route</h2>
+<p class="text-on-surface-variant text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="today">today</span>
+                                Today, 24 Oct 2023
+                            </p>
+</div>
+<div class="text-right">
+<p class="text-2xl font-bold text-tertiary">14/22</p>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Stops Completed</p>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="h-1 w-full bg-outline-variant/20 rounded-full overflow-hidden">
+<div class="h-full bg-tertiary w-[63%] shadow-[0_0_8px_rgba(155,255,206,0.5)]"></div>
+</div>
+</div>
+<!-- Scrollable Stops Feed -->
+<div class="flex-1 overflow-y-auto p-4 hide-scrollbar space-y-6">
+<!-- Municipality Group: Monterrey -->
+<div class="space-y-3">
+<div class="flex items-center gap-3 px-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">Monterrey Center</span>
+<div class="h-px flex-1 bg-outline-variant/20"></div>
+</div>
+<!-- Stop Card: Active -->
+<div class="bg-surface-container-highest rounded-xl p-4 border-l-4 border-primary shadow-sm hover:bg-surface-bright transition-colors cursor-pointer group">
+<div class="flex justify-between items-start mb-3">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold border border-primary/20">STOP 15</span>
+<span class="text-[10px] font-bold text-tertiary">NEXT UP</span>
+</div>
+<h3 class="font-bold text-on-surface leading-tight">Residencial Las Torres</h3>
+<p class="text-xs text-on-surface-variant">Juan O'Gorman #1204</p>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface">14:00 - 16:00</p>
+<p class="text-[10px] text-on-surface-variant">Delivery Window</p>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-lg p-3 mb-4 flex items-center justify-between border border-outline-variant/10">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-outline-variant/20 rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-primary-dim" data-icon="water_drop">water_drop</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Vertical 1100L</p>
+<p class="text-[10px] text-on-surface-variant">Black / Multi-layer</p>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="phone">phone</span>
+</button>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-gradient-to-br from-primary to-primary-container py-3 rounded-lg text-on-primary text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                    Delivered
+                                </button>
+<button class="px-4 border border-outline-variant/30 rounded-lg text-error text-xs font-bold uppercase hover:bg-error/10 transition-colors">
+                                    Issue
+                                </button>
+</div>
+</div>
+<!-- Stop Card: Queued -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-outline-variant/20 text-on-surface-variant px-1.5 py-0.5 rounded text-[10px] font-bold">STOP 16</span>
+</div>
+<h3 class="font-bold text-on-surface leading-tight">Condominios Acero</h3>
+<p class="text-xs text-on-surface-variant">Av. Constitución #500</p>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface-variant">16:30 - 18:00</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Municipality Group: San Pedro -->
+<div class="space-y-3">
+<div class="flex items-center gap-3 px-2">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">San Pedro Garza</span>
+<div class="h-px flex-1 bg-outline-variant/20"></div>
+</div>
+<!-- Stop Card: Queued -->
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-outline-variant/20 text-on-surface-variant px-1.5 py-0.5 rounded text-[10px] font-bold">STOP 17</span>
+</div>
+<h3 class="font-bold text-on-surface leading-tight">Valle Oriente II</h3>
+<p class="text-xs text-on-surface-variant">Río Missisipi #405</p>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface-variant">18:15 - 19:30</p>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 hover:bg-surface-container-high transition-colors cursor-pointer group">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="bg-outline-variant/20 text-on-surface-variant px-1.5 py-0.5 rounded text-[10px] font-bold">STOP 18</span>
+</div>
+<h3 class="font-bold text-on-surface leading-tight">Plaza Fiesta Agustín</h3>
+<p class="text-xs text-on-surface-variant">Av. Real San Agustín #100</p>
+</div>
+<div class="text-right">
+<p class="text-xs font-bold text-on-surface-variant">19:45 - 21:00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Action Bar (Fixed on Sidebar) -->
+<div class="p-4 bg-surface-container-highest border-t border-outline-variant/10 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="route">route</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">End Point</p>
+<p class="text-xs font-bold text-on-surface">Main Warehouse North</p>
+</div>
+</div>
+<button class="bg-surface-container-low p-3 rounded-lg text-on-surface hover:text-tertiary transition-colors border border-outline-variant/20">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+</button>
+</div>
+</aside>
+</div>
+<!-- Mobile Bottom Nav (Suppressed if needed by shell rules, but including for responsive consistency) -->
+<nav class="md:hidden flex items-center justify-around h-16 bg-[#05183c] border-t border-outline-variant/10 px-4">
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px]">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" data-icon="local_shipping" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
+<span class="text-[10px]">Routes</span>
+</button>
+<div class="-mt-8 w-14 h-14 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center shadow-xl shadow-primary/20 border-4 border-background active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-primary text-2xl" data-icon="add">add</span>
+</div>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="description">description</span>
+<span class="text-[10px]">Docs</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="text-[10px]">Profile</span>
+</button>
+</nav>
+</main>
+<!-- Floating Quick Status (Mobile Hub View) -->
+<div class="fixed bottom-20 left-4 right-4 md:hidden z-20">
+<div class="bg-surface-container-highest/90 backdrop-blur-xl border border-outline-variant/20 p-4 rounded-2xl flex items-center justify-between shadow-2xl">
+<div class="flex items-center gap-3">
+<div class="w-2 h-10 bg-primary rounded-full"></div>
+<div>
+<p class="text-[10px] font-bold text-primary uppercase">Current Stop</p>
+<p class="text-sm font-bold text-on-surface">Monterrey Center #15</p>
+</div>
+</div>
+<button class="bg-surface-container-low px-4 py-2 rounded-lg text-xs font-bold text-tertiary border border-tertiary/20">
+                VIEW DETAILS
+            </button>
+</div>
+</div>
+</body></html>

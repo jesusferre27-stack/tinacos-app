@@ -4,13 +4,8 @@
 // Archivo: /api/agentes/generador.js
 // ============================================================
 
-import { createClient } from '@supabase/supabase-js'
+import { supabaseAdmin as supabase } from '../../../lib/supabase'
 import { jsPDF } from 'jspdf'
-
-const supabase = createClient(
-  'https://mcwlpopucpxfjdawxlgk.supabase.co',
-  process.env.SUPABASE_SERVICE_KEY
-)
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end()
@@ -164,7 +159,7 @@ function generarHTMLComprobante(lead, apartado, catalogo) {
     <div class="row"><span class="key">Municipio</span><span class="val">${lead.municipio}</span></div>
     <div class="row"><span class="key">Cantidad</span><span class="val">${lead.cantidad} tinaco${lead.cantidad > 1 ? 's' : ''}</span></div>
     <div class="row"><span class="key">Capacidad</span><span class="val">${lead.capacidad_lts} litros</span></div>
-    <div class="row"><span class="key">Entrega</span><span class="val green">Contra entrega</span></div>
+    <div class="row"><span class="key">Pago</span><span class="val green">Contra entrega</span></div>
   </div>
   <div class="concepto">
     <div class="c-label">Dirección / Punto de entrega</div>
