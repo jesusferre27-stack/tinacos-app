@@ -29,16 +29,34 @@ function getAgentIcon(agentName) {
 }
 
 export default async function Dashboard() {
-  const { data: metrics, error: metricsError } = await supabaseAdmin
-    .from("tinacos_dashboard")
-    .select("*")
-    .single();
+  let metrics = null;
+  let metricsError = null;
+  let logs = [];
+  let logsError = null;
 
-  const { data: logs, error: logsError } = await supabaseAdmin
-    .from("tinacos_agentes_log")
-    .select("*, tinacos_leads(folio)")
-    .order("created_at", { ascending: false })
-    .limit(10);
+  if (supabaseAdmin) {
+    try {
+      const { data: m, error: me } = await supabaseAdmin
+        .from("tinacos_dashboard")
+        .select("*")
+        .single();
+      metrics = m;
+      metricsError = me;
+
+      const { data: l, error: le } = await supabaseAdmin
+        .from("tinacos_agentes_log")
+        .select("*, tinacos_leads(folio)")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      logs = l || [];
+      logsError = le;
+    } catch (e) {
+      console.error("Error fetching dashboard data:", e);
+      metricsError = e;
+    }
+  } else {
+    metricsError = { message: "Supabase no está configurado (variables de entorno faltantes)." };
+  }
 
   const data = metrics || {
     leads_nuevos: 0,
