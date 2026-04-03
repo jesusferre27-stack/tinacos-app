@@ -99,40 +99,41 @@ export default function Logistica() {
   return (
     <div className="flex flex-col md:flex-row overflow-hidden bg-[#001b3d]" style={{ minHeight: "calc(100vh - 64px)" }}>
       {/* Map View - Simulado para Veracruz Sur */}
-      <section className="flex-1 relative h-64 md:h-auto bg-[#001128] overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(#2b4680 0 1px, transparent 1px 100%), repeating-linear-gradient(90deg, #2b4680 0 1px, transparent 1px 100%)",
-            backgroundSize: "40px 40px",
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#001b3d] to-[#001128] opacity-80" />
+      <section className="flex-1 relative h-64 md:h-auto overflow-hidden bg-[#001128]">
+        {/* Mapa Real Google Maps — Formato de alta compatibilidad para Veracruz */}
+        <iframe
+          src="https://maps.google.com/maps?q=18.11,-94.48&hl=es&z=12&output=embed"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          className="absolute inset-0 w-full h-full opacity-100"
+          loading="lazy"
+        ></iframe>
 
-        <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <div className="bg-[#00214c]/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-[#7bd0ff]/20 flex items-center gap-2 shadow-lg">
-            <span className="w-2 h-2 rounded-full bg-[#9bffce] animate-pulse" />
-            <span className="text-[10px] font-bold text-[#e1e2e6] tracking-wider uppercase">
-              Live Route Tracking
+        <div className="absolute top-4 left-4 flex flex-col gap-2 z-10">
+          <div className="bg-[#00214c] px-4 py-2 rounded-lg border border-[#7bd0ff]/40 flex items-center gap-2 shadow-[0_0_25px_rgba(0,0,0,0.6)]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#9bffce] animate-pulse" />
+            <span className="text-xs font-bold text-[#e1e2e6] tracking-widest uppercase">
+              Live Terminal • Veracruz Sur
             </span>
           </div>
         </div>
 
+        {/* Marcadores Estilo Dashboard Navegable */}
         {stops.map((g, idx) => (
           <div 
             key={g.group} 
-            className="absolute transition-all duration-1000"
+            className="absolute transition-all duration-1000 z-10"
             style={{ 
-              top: `${25 + (idx * 12)}%`, 
-              left: `${20 + (idx * 14)}%` 
+              top: `${25 + (idx * 15)}%`, 
+              left: `${35 + (idx * 10)}%` 
             }}
           >
-            <div className="flex flex-col items-center group cursor-pointer">
-              <div className="bg-[#006495] text-white px-2 py-1 rounded shadow-xl text-[10px] font-bold mb-1 group-hover:scale-110 transition-transform whitespace-nowrap">
+            <div className="flex flex-col items-center group cursor-pointer active:scale-95 transition-transform">
+              <div className="bg-[#006495] text-[#9bffce] px-3 py-1.5 rounded-full shadow-[0_0_20px_rgba(0,100,149,0.5)] text-[10px] font-bold mb-1 border border-[#7bd0ff]/30 backdrop-blur-sm">
                 {g.group}
               </div>
-              <span className="material-symbols-outlined text-[#7bd0ff] text-3xl drop-shadow-[0_0_8px_#006495]">location_on</span>
+              <span className="material-symbols-outlined text-[#7bd0ff] text-4xl drop-shadow-[0_0_15px_rgba(123,208,255,0.7)]">location_on</span>
             </div>
           </div>
         ))}
@@ -222,8 +223,14 @@ export default function Logistica() {
                   </div>
                   {!stop.completed && (
                     <div className="flex gap-2 mt-4">
-                      <button className="flex-1 bg-[#006495] py-2.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#007cb8]">
-                        <span className="material-symbols-outlined text-sm">check_circle</span>
+                      <button 
+                        onClick={() => {
+                          const query = encodeURIComponent(`${stop.address}, ${group.group}, Veracruz, Mexico`);
+                          window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, '_blank');
+                        }}
+                        className="flex-1 bg-[#006495] py-2.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#007cb8]"
+                      >
+                        <span className="material-symbols-outlined text-sm">directions</span>
                         ENTREGAR
                       </button>
                       <button className="px-3 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
