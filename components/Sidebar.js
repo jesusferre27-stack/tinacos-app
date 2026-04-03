@@ -14,7 +14,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="h-screen w-64 fixed left-0 top-0 z-40 bg-[#05183c] border-r border-[#2b4680]/15 flex flex-col py-6 gap-2">
+    <aside className="h-screen w-64 fixed left-0 top-0 z-40 bg-[#05183c] border-r border-[#2b4680]/15 flex-col py-6 gap-2 hidden md:flex">
       <div className="px-6 mb-8">
         <h1 className="text-lg font-bold tracking-widest text-[#dee5ff] uppercase">
           TINACOS LOGISTICS

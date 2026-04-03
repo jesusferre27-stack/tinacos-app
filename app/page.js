@@ -79,7 +79,7 @@ export default async function Dashboard() {
     totalLeads > 0 ? Math.round((apartadosTotal / totalLeads) * 100) : 0;
 
   return (
-    <div className="p-4 md:p-8 space-y-6 pb-32 overflow-x-hidden">
+    <div className="p-4 sm:p-8 space-y-6 pb-32 overflow-x-hidden">
       {(metricsError || logsError) && (
         <div className="bg-error-container/20 border border-error p-4 rounded-xl text-error text-sm">
           <strong>Error conectando a DB:</strong>{" "}
@@ -88,7 +88,7 @@ export default async function Dashboard() {
       )}
 
       {/* Metric KPI Cards */}
-      <section className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         {/* Extractor */}
         <div className="bg-surface-container-highest p-4 rounded relative overflow-hidden group hover:bg-surface-bright transition-colors">
           <div className="absolute top-0 left-0 w-full h-[2px] bg-primary"></div>

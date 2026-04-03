@@ -1,21 +1,21 @@
 export default function Pipeline() {
   return (
-    <div className="p-8 pb-32">
+    <div className="p-4 sm:p-8 pb-32">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
         <div>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex flex-wrap items-center gap-2 mb-2">
             <span className="bg-primary-container text-primary text-[10px] font-bold px-2 py-0.5 rounded tracking-widest uppercase">
               Lead ID: #XT-9942
             </span>
-            <span className="text-on-surface-variant text-xs font-label">
+            <span className="text-on-surface-variant text-[10px] sm:text-xs font-label">
               Initiated 12:44:02 GMT
             </span>
           </div>
-          <h2 className="text-3xl font-semibold text-on-surface tracking-tight leading-none">
+          <h2 className="text-2xl sm:text-3xl font-semibold text-on-surface tracking-tight leading-none">
             Vortex Global Logistics
           </h2>
-          <p className="text-on-surface-variant text-sm mt-2 max-w-xl">
+          <p className="text-on-surface-variant text-xs sm:text-sm mt-2 max-w-xl">
             Deep-tracking lead progression through the automated AI agent
             cluster. Currently performing intent analysis and route optimization.
           </p>

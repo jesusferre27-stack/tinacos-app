@@ -62,7 +62,7 @@ _Alianza Comunitaria para el Desarrollo_`
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${process.env.CHATLEVEL_API_KEY}`
+      'Authorization': `Bearer ${process.env.CHATLEVEL_API_KEY || process.env.CLAVE_API_DE_NIVEL_CHAT}`
     },
     body: JSON.stringify({
       phone: telefono,

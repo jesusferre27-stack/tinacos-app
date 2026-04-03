@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
       </head>
       <body className="font-['Inter']" suppressHydrationWarning>
         <Sidebar />
-        <main style={{ marginLeft: '256px', minHeight: '100vh' }}>
+        <main className="transition-all duration-300 ml-0 md:ml-64 min-h-screen">
           <Topbar />
           {children}
         </main>

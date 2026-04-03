@@ -208,7 +208,7 @@ async function registrarLog(leadId, agente, accion, resultado, detalle) {
 async function dispararGenerador(leadId) {
   // Llama al Agente 3 internamente
   try {
-    await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/agentes/generador`, {
+    await fetch(`${process.env.NEXT_PUBLIC_APP_URL || process.env.SIGUIENTE_URL_DE_LA_APPLICACIÓN_PÚBLICA}/api/agentes/generador`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lead_id: leadId })

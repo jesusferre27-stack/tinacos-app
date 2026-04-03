@@ -1,52 +1,91 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+// Creamos un cliente anonimo para el navegador (usando las variables que ya estan en el sitio)
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
 export default function Logistica() {
-  const stops = [
-    {
-      group: "Monterrey Centro",
-      items: [
-        {
-          num: "STOP 15",
-          name: "Residencial Las Torres",
-          address: "Juan O'Gorman #1204",
-          window: "14:00 - 16:00",
-          product: "Tinaco Vertical 1100L",
-          tag: "NEXT UP",
-          active: true,
-        },
-        {
-          num: "STOP 16",
-          name: "Condominios Acero",
-          address: "Av. Constitución #500",
-          window: "16:30 - 18:00",
-          active: false,
-        },
-      ],
-    },
-    {
-      group: "San Pedro Garza García",
-      items: [
-        {
-          num: "STOP 17",
-          name: "Valle Oriente II",
-          address: "Río Mississippi #405",
-          window: "18:15 - 19:30",
-          active: false,
-        },
-        {
-          num: "STOP 18",
-          name: "Plaza Fiesta Agustín",
-          address: "Av. Real San Agustín #100",
-          window: "19:45 - 21:00",
-          active: false,
-        },
-      ],
-    },
-  ];
+  const [stops, setStops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({ completed: 0, total: 0 });
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        setLoading(true);
+        // 1. Obtener las entregas del dia (Rutas)
+        const { data: entregas, error: e1 } = await supabase
+          .from("tinacos_entregas")
+          .select("*")
+          .eq("fecha_entrega", "2026-04-03")
+          .order("id");
+
+        if (e1) throw e1;
+
+        // 2. Obtener los detalles vinculados
+        const { data: detalles, error: e2 } = await supabase
+          .from("tinacos_entrega_detalle")
+          .select(`
+            *,
+            apartado:tinacos_apartados(*)
+          `)
+          .order("orden_ruta");
+
+        if (e2) throw e2;
+
+        // 3. Agrupar por ruta
+        const grouped = entregas.map((route) => {
+          const items = detalles
+            .filter((d) => d.entrega_id === route.id)
+            .map((d, i) => ({
+              num: `STOP ${i + 1}`,
+              name: d.apartado?.nombre_cliente || "Cargando...",
+              address: d.apartado?.direccion || "Cargando...",
+              window: "09:00 - 18:00",
+              product: `Tinaco ${d.apartado?.capacidad_lts || "1100"}L`,
+              tag: d.estado_entrega === "completado" ? "ENTREGADO" : "PENDIENTE",
+              active: d.estado_entrega === "pendiente",
+              completed: d.estado_entrega === "completado"
+            }));
+
+          return {
+            group: (route.notas_ruta || route.municipio).toUpperCase(),
+            items: items,
+          };
+        });
+
+        const total = detalles.length;
+        const completed = detalles.filter(d => d.estado_entrega === 'completado').length;
+
+        setStops(grouped);
+        setStats({ completed, total });
+        setLoading(false);
+      } catch (err) {
+        console.error("Error cargando logistica:", err);
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#001b3d] text-[#7bd0ff]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#7bd0ff] mr-4" />
+        <span className="font-bold tracking-widest uppercase">Cargando Hoja de Ruta...</span>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col md:flex-row overflow-hidden" style={{ minHeight: "calc(100vh - 64px)" }}>
+    <div className="flex flex-col md:flex-row overflow-hidden bg-[#001b3d]" style={{ minHeight: "calc(100vh - 64px)" }}>
       {/* Map View */}
-      <section className="flex-1 relative h-64 md:h-auto bg-surface-container-lowest overflow-hidden">
-        {/* Map background placeholder */}
+      <section className="flex-1 relative h-64 md:h-auto bg-[#001128] overflow-hidden">
         <div
           className="absolute inset-0 opacity-30"
           style={{
@@ -55,199 +94,153 @@ export default function Logistica() {
             backgroundSize: "40px 40px",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-surface to-surface-container-low opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#001b3d] to-[#001128] opacity-80" />
 
-        {/* Live tracking badge */}
         <div className="absolute top-4 left-4 flex flex-col gap-2">
-          <div className="bg-surface-container-highest/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-outline-variant/20 flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
-            <span className="text-[10px] font-bold text-on-surface tracking-wider uppercase">
+          <div className="bg-[#00214c]/80 backdrop-blur-md px-3 py-1.5 rounded-md border border-[#7bd0ff]/20 flex items-center gap-2 shadow-lg">
+            <span className="w-2 h-2 rounded-full bg-[#9bffce] animate-pulse" />
+            <span className="text-[10px] font-bold text-[#e1e2e6] tracking-wider uppercase">
               Live Route Tracking
             </span>
           </div>
         </div>
 
-        {/* Decorative map pins */}
-        <div className="absolute top-1/4 left-1/3 group cursor-pointer">
-          <div className="flex flex-col items-center">
-            <div className="bg-primary text-on-primary px-2 py-1 rounded shadow-lg text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              STOP 15
+        {/* Map Pins Dinámicos (Simulados por ahora en posiciones clave para Veracruz) */}
+        {stops.map((g, idx) => (
+          <div 
+            key={g.group} 
+            className="absolute transition-all duration-1000"
+            style={{ 
+              top: `${25 + (idx * 12)}%`, 
+              left: `${20 + (idx * 14)}%` 
+            }}
+          >
+            <div className="flex flex-col items-center group cursor-pointer">
+              <div className="bg-[#006495] text-white px-2 py-1 rounded shadow-xl text-[10px] font-bold mb-1 group-hover:scale-110 transition-transform whitespace-nowrap">
+                {g.group}
+              </div>
+              <span className="material-symbols-outlined text-[#7bd0ff] text-3xl drop-shadow-[0_0_8px_#006495]">location_on</span>
             </div>
-            <span className="material-symbols-outlined text-primary text-3xl">
-              location_on
-            </span>
           </div>
-        </div>
-        <div className="absolute top-2/3 right-1/4 group cursor-pointer">
-          <div className="flex flex-col items-center">
-            <div className="bg-tertiary text-on-tertiary px-2 py-1 rounded shadow-lg text-[10px] font-bold mb-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              STOP 17
-            </div>
-            <span className="material-symbols-outlined text-tertiary text-3xl">
-              location_on
-            </span>
-          </div>
-        </div>
+        ))}
 
-        {/* Vehicle ping */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="relative">
-            <div className="w-4 h-4 rounded-full bg-primary border-2 border-on-surface shadow-[0_0_10px_#7bd0ff]" />
-            <div className="absolute inset-0 rounded-full bg-primary/30 animate-ping" />
-          </div>
-        </div>
-
-        {/* Map controls */}
         <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-          <button className="w-10 h-10 bg-surface-container-highest rounded-lg flex items-center justify-center text-on-surface shadow-lg hover:bg-surface-bright transition-colors">
+          <button className="w-10 h-10 bg-[#00214c] rounded-lg text-white shadow-lg flex items-center justify-center">
             <span className="material-symbols-outlined">add</span>
           </button>
-          <button className="w-10 h-10 bg-surface-container-highest rounded-lg flex items-center justify-center text-on-surface shadow-lg hover:bg-surface-bright transition-colors">
+          <button className="w-10 h-10 bg-[#00214c] rounded-lg text-white shadow-lg flex items-center justify-center">
             <span className="material-symbols-outlined">remove</span>
           </button>
-          <button className="w-10 h-10 bg-primary text-on-primary rounded-lg flex items-center justify-center shadow-lg hover:bg-primary-dim transition-colors">
+          <button className="w-10 h-10 bg-[#006495] text-white rounded-lg shadow-lg flex items-center justify-center">
             <span className="material-symbols-outlined">my_location</span>
           </button>
         </div>
       </section>
 
       {/* Stop List Panel */}
-      <aside className="w-full md:w-[420px] bg-surface-container border-l border-outline-variant/15 flex flex-col z-10 shadow-2xl">
-        {/* Header */}
-        <div className="p-6 border-b border-outline-variant/10">
-          <div className="flex justify-between items-end mb-4">
+      <aside className="w-full md:w-[420px] bg-[#001b3d] border-l border-[#7bd0ff]/10 flex flex-col z-10 shadow-2xl">
+        <div className="p-4 sm:p-6 border-b border-[#7bd0ff]/10">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-4 gap-4">
             <div>
-              <h2 className="text-xl font-bold text-on-surface tracking-tight">
-                Ruta Activa
+              <h2 className="text-lg sm:text-xl font-bold text-[#e1e2e6] tracking-tight uppercase">
+                Ruta Activa (Sur Ver)
               </h2>
-              <p className="text-on-surface-variant text-sm flex items-center gap-1" suppressHydrationWarning>
+              <p className="text-[#a5abbf] text-xs sm:text-sm flex items-center gap-1">
                 <span className="material-symbols-outlined text-xs">today</span>
-                Hoy, {new Date().toLocaleDateString("es-MX", { day: "numeric", month: "long" })}
+                Mañana, 3 de abril
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-2xl font-bold text-tertiary">14/22</p>
-              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
-                Paradas Completadas
+            <div className="text-left sm:text-right">
+              <p className="text-xl sm:text-2xl font-bold text-[#9bffce] leading-none">
+                {stats.completed}/{stats.total}
+              </p>
+              <p className="text-[10px] sm:text-[10px] font-bold text-[#a5abbf] uppercase tracking-widest mt-1">
+                PARADAS
               </p>
             </div>
           </div>
-          {/* Progress */}
-          <div className="h-1 w-full bg-outline-variant/20 rounded-full overflow-hidden">
+          <div className="h-1.5 w-full bg-[#00214c] rounded-full overflow-hidden">
             <div
-              className="h-full bg-tertiary shadow-[0_0_8px_rgba(155,255,206,0.5)]"
-              style={{ width: "63%" }}
+              className="h-full bg-[#9bffce] shadow-[0_0_8px_rgba(155,255,206,0.5)] transition-all duration-1000"
+              style={{ width: `${(stats.completed / (stats.total || 1)) * 100}%` }}
             />
           </div>
         </div>
 
-        {/* Scrollable stops feed */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6" style={{ maxHeight: "calc(100vh - 240px)" }}>
-          {stops.map((group) => (
+          {stops.length === 0 ? (
+             <div className="text-center py-10 opacity-50 text-[#a5abbf]">No hay rutas para mañana</div>
+          ) : stops.map((group) => (
             <div key={group.group} className="space-y-3">
               <div className="flex items-center gap-3 px-2">
-                <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em]">
+                <span className="text-[10px] font-bold text-[#7bd0ff] uppercase tracking-[0.2em]">
                   {group.group}
                 </span>
-                <div className="h-px flex-1 bg-outline-variant/20" />
+                <div className="h-px flex-1 bg-[#7bd0ff]/10" />
               </div>
-              {group.items.map((stop) =>
-                stop.active ? (
-                  <div
-                    key={stop.num}
-                    className="bg-surface-container-highest rounded-xl p-4 border-l-4 border-primary shadow-sm hover:bg-surface-bright transition-colors cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded text-[10px] font-bold border border-primary/20">
-                            {stop.num}
-                          </span>
-                          {stop.tag && (
-                            <span className="text-[10px] font-bold text-tertiary">
-                              {stop.tag}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="font-bold text-on-surface leading-tight">
-                          {stop.name}
-                        </h3>
-                        <p className="text-xs text-on-surface-variant">{stop.address}</p>
+              {group.items.map((stop) => (
+                <div
+                  key={stop.name + stop.num}
+                  className={`rounded-xl p-4 border transition-all cursor-pointer ${
+                    stop.completed 
+                    ? 'bg-[#00214c]/40 border-transparent opacity-50' 
+                    : stop.active 
+                    ? 'bg-[#00214c] border-[#006495] border-l-4 shadow-lg scale-[1.02]'
+                    : 'bg-[#001128] border-transparent hover:bg-[#00214c]'
+                  }`}
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold border ${
+                          stop.completed ? 'bg-[#e1e2e6]/10 text-[#a5abbf] border-transparent' : 'bg-[#006495]/20 text-[#7bd0ff] border-[#006495]/30'
+                        }`}>
+                          {stop.num}
+                        </span>
+                        <span className={`text-[10px] font-bold ${stop.completed ? 'text-[#a5abbf]' : 'text-[#9bffce]'}`}>
+                          {stop.tag}
+                        </span>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-on-surface">{stop.window}</p>
-                        <p className="text-[10px] text-on-surface-variant">Delivery Window</p>
-                      </div>
+                      <h3 className="font-bold text-[#e1e2e6] leading-tight uppercase text-sm">
+                        {stop.name}
+                      </h3>
+                      <p className="text-[11px] text-[#a5abbf] mt-1">{stop.address}</p>
                     </div>
-                    {stop.product && (
-                      <div className="bg-surface-container-low rounded-lg p-3 mb-4 flex items-center justify-between border border-outline-variant/10">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-outline-variant/20 rounded flex items-center justify-center">
-                            <span className="material-symbols-outlined text-primary-dim">
-                              water_drop
-                            </span>
-                          </div>
-                          <div>
-                            <p className="text-xs font-bold text-on-surface">{stop.product}</p>
-                            <p className="text-[10px] text-on-surface-variant">Negro / Multi-capa</p>
-                          </div>
-                        </div>
-                        <button className="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-highest hover:text-primary transition-colors">
-                          <span className="material-symbols-outlined">phone</span>
-                        </button>
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      <button className="flex-1 bg-gradient-to-br from-primary to-primary-container py-3 rounded-lg text-on-primary text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                  </div>
+                  {!stop.completed && (
+                    <div className="flex gap-2 mt-4">
+                      <button className="flex-1 bg-[#006495] py-2.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-transform">
                         <span className="material-symbols-outlined text-sm">check_circle</span>
-                        Entregado
+                        ENTREGAR
                       </button>
-                      <button className="px-4 border border-outline-variant/30 rounded-lg text-error text-xs font-bold uppercase hover:bg-error/10 transition-colors">
-                        Problema
+                      <button className="px-3 border border-red-500/30 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors">
+                        <span className="material-symbols-outlined text-sm">priority_high</span>
                       </button>
                     </div>
-                  </div>
-                ) : (
-                  <div
-                    key={stop.num}
-                    className="bg-surface-container-low rounded-xl p-4 border border-outline-variant/10 hover:bg-surface-container-high transition-colors cursor-pointer"
-                  >
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="bg-outline-variant/20 text-on-surface-variant px-1.5 py-0.5 rounded text-[10px] font-bold">
-                            {stop.num}
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-on-surface leading-tight">{stop.name}</h3>
-                        <p className="text-xs text-on-surface-variant">{stop.address}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs font-bold text-on-surface-variant">{stop.window}</p>
-                      </div>
-                    </div>
-                  </div>
-                )
-              )}
+                  )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
 
-        {/* Bottom Action Bar */}
-        <div className="p-4 bg-surface-container-highest border-t border-outline-variant/10 flex items-center justify-between">
+        <div className="p-4 bg-[#001128] border-t border-[#7bd0ff]/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
-              <span className="material-symbols-outlined">route</span>
+            <div className="w-10 h-10 rounded-lg bg-[#00214c] flex items-center justify-center text-[#7bd0ff]">
+              <span className="material-symbols-outlined text-3xl">local_shipping</span>
             </div>
             <div>
-              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+              <p className="text-[10px] font-bold text-[#a5abbf] uppercase tracking-wider mb-0.5">
                 Punto Final
               </p>
-              <p className="text-xs font-bold text-on-surface">Bodega Principal Norte</p>
+              <p className="text-xs font-bold text-[#e1e2e6] uppercase">BODEGA COSO</p>
             </div>
           </div>
-          <button className="bg-surface-container-low p-3 rounded-lg text-on-surface hover:text-tertiary transition-colors border border-outline-variant/20">
-            <span className="material-symbols-outlined">logout</span>
+          <button 
+            onClick={() => window.location.reload()}
+            className="bg-[#00214c] p-3 rounded-lg text-[#7bd0ff] hover:text-[#9bffce] border border-[#7bd0ff]/10 transition-colors"
+          >
+             <span className="material-symbols-outlined">refresh</span>
           </button>
         </div>
       </aside>
