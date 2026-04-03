@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
-// Creamos un cliente anonimo para el navegador (usando las variables que ya estan en el sitio)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Inicialización segura del cliente Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+const supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
 
 export default function Logistica() {
   const [stops, setStops] = useState([]);
@@ -15,9 +15,14 @@ export default function Logistica() {
 
   useEffect(() => {
     async function loadData() {
+      if (!supabase) {
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
-        // 1. Obtener las entregas del dia (Rutas)
+        // 1. Obtener las entregas del día (Rutas) - Usamos fecha fija para mañana según el plan
         const { data: entregas, error: e1 } = await supabase
           .from("tinacos_entregas")
           .select("*")
@@ -38,13 +43,14 @@ export default function Logistica() {
         if (e2) throw e2;
 
         // 3. Agrupar por ruta
-        const grouped = entregas.map((route) => {
-          const items = detalles
+        const grouped = (entregas || []).map((route) => {
+          const items = (detalles || [])
             .filter((d) => d.entrega_id === route.id)
             .map((d, i) => ({
+              id: d.id,
               num: `STOP ${i + 1}`,
-              name: d.apartado?.nombre_cliente || "Cargando...",
-              address: d.apartado?.direccion || "Cargando...",
+              name: d.apartado?.nombre_cliente || "Sin Nombre",
+              address: d.apartado?.direccion || "Sin Dirección",
               window: "09:00 - 18:00",
               product: `Tinaco ${d.apartado?.capacidad_lts || "1100"}L`,
               tag: d.estado_entrega === "completado" ? "ENTREGADO" : "PENDIENTE",
@@ -53,13 +59,13 @@ export default function Logistica() {
             }));
 
           return {
-            group: (route.notas_ruta || route.municipio).toUpperCase(),
+            group: (route.notas_ruta || route.municipio || "RUTA").toUpperCase(),
             items: items,
           };
         });
 
-        const total = detalles.length;
-        const completed = detalles.filter(d => d.estado_entrega === 'completado').length;
+        const total = (detalles || []).length;
+        const completed = (detalles || []).filter(d => d.estado_entrega === 'completado').length;
 
         setStops(grouped);
         setStats({ completed, total });
@@ -82,9 +88,17 @@ export default function Logistica() {
     );
   }
 
+  if (!supabase) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#001b3d] text-white">
+        Configuración de base de datos incompleta.
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col md:flex-row overflow-hidden bg-[#001b3d]" style={{ minHeight: "calc(100vh - 64px)" }}>
-      {/* Map View */}
+      {/* Map View - Simulado para Veracruz Sur */}
       <section className="flex-1 relative h-64 md:h-auto bg-[#001128] overflow-hidden">
         <div
           className="absolute inset-0 opacity-30"
@@ -105,7 +119,6 @@ export default function Logistica() {
           </div>
         </div>
 
-        {/* Map Pins Dinámicos (Simulados por ahora en posiciones clave para Veracruz) */}
         {stops.map((g, idx) => (
           <div 
             key={g.group} 
@@ -125,13 +138,13 @@ export default function Logistica() {
         ))}
 
         <div className="absolute bottom-4 right-4 flex flex-col gap-2">
-          <button className="w-10 h-10 bg-[#00214c] rounded-lg text-white shadow-lg flex items-center justify-center">
+          <button className="w-10 h-10 bg-[#00214c] rounded-lg text-white shadow-lg flex items-center justify-center hover:bg-[#003163]">
             <span className="material-symbols-outlined">add</span>
           </button>
-          <button className="w-10 h-10 bg-[#00214c] rounded-lg text-white shadow-lg flex items-center justify-center">
+          <button className="w-10 h-10 bg-[#00214c] rounded-lg text-white shadow-lg flex items-center justify-center hover:bg-[#003163]">
             <span className="material-symbols-outlined">remove</span>
           </button>
-          <button className="w-10 h-10 bg-[#006495] text-white rounded-lg shadow-lg flex items-center justify-center">
+          <button className="w-10 h-10 bg-[#006495] text-white rounded-lg shadow-lg flex items-center justify-center hover:bg-[#007cb8]">
             <span className="material-symbols-outlined">my_location</span>
           </button>
         </div>
@@ -154,7 +167,7 @@ export default function Logistica() {
               <p className="text-xl sm:text-2xl font-bold text-[#9bffce] leading-none">
                 {stats.completed}/{stats.total}
               </p>
-              <p className="text-[10px] sm:text-[10px] font-bold text-[#a5abbf] uppercase tracking-widest mt-1">
+              <p className="text-[10px] font-bold text-[#a5abbf] uppercase tracking-widest mt-1">
                 PARADAS
               </p>
             </div>
@@ -169,7 +182,7 @@ export default function Logistica() {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-6" style={{ maxHeight: "calc(100vh - 240px)" }}>
           {stops.length === 0 ? (
-             <div className="text-center py-10 opacity-50 text-[#a5abbf]">No hay rutas para mañana</div>
+             <div className="text-center py-10 opacity-50 text-[#a5abbf]">No hay rutas vinculadas aún.</div>
           ) : stops.map((group) => (
             <div key={group.group} className="space-y-3">
               <div className="flex items-center gap-3 px-2">
@@ -180,7 +193,7 @@ export default function Logistica() {
               </div>
               {group.items.map((stop) => (
                 <div
-                  key={stop.name + stop.num}
+                  key={stop.id || stop.name}
                   className={`rounded-xl p-4 border transition-all cursor-pointer ${
                     stop.completed 
                     ? 'bg-[#00214c]/40 border-transparent opacity-50' 
@@ -209,7 +222,7 @@ export default function Logistica() {
                   </div>
                   {!stop.completed && (
                     <div className="flex gap-2 mt-4">
-                      <button className="flex-1 bg-[#006495] py-2.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-transform">
+                      <button className="flex-1 bg-[#006495] py-2.5 rounded-lg text-white text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#007cb8]">
                         <span className="material-symbols-outlined text-sm">check_circle</span>
                         ENTREGAR
                       </button>
