@@ -1,6 +1,5 @@
 import "./globals.css";
-import Sidebar from "../components/Sidebar";
-import Topbar from "../components/Topbar";
+import ClientLayoutWrapper from "../components/ClientLayoutWrapper";
 
 export const metadata = {
   title: "TINACOS LOGISTICS - AI Orchestration",
@@ -20,12 +19,8 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body className="font-['Inter']" suppressHydrationWarning>
-        <Sidebar />
-        <main className="transition-all duration-300 ml-0 md:ml-64 min-h-screen">
-          <Topbar />
-          {children}
-        </main>
+      <body className="font-['Inter'] bg-[#060e20]" suppressHydrationWarning>
+        <ClientLayoutWrapper>{children}</ClientLayoutWrapper>
       </body>
     </html>
   );
